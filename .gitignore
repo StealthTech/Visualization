@@ -4,3 +4,6 @@
 # PyCharm meta files
 /.idea
 /__pycache__
+
+# Legacy code
+/legacy
