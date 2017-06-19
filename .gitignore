@@ -1,2 +1,6 @@
+# Python environment folder
 /env
+
+# PyCharm meta files
 /.idea
+/__pycache__
