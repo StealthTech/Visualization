@@ -1,16 +1,31 @@
 import numpy as np
+import pandas as pd
+import pandas.plotting
+import pylab as pl
+import os
+
+PROJECT_TITLE = 'Vizualization'
+VERSION = '0.5a'
 
 SAMPLES_DIR = 'samples'
+SAMPLES_DEFAULT_FILENAME = 'dump.csv'
 
 
-def dump(limits, accuracy, filename='dump.csv'):
+def version():
+    return f'{PROJECT_TITLE} {VERSION}'
+
+
+def dump(limits, accuracy, filename=SAMPLES_DEFAULT_FILENAME):
+    if not os.path.exists(SAMPLES_DIR):
+        os.mkdir(SAMPLES_DIR)
+
     filepath = f'{SAMPLES_DIR}/{filename}'
 
     steps = []
     for lim in limits:
         steps.append((lim[1] - lim[0]) / accuracy)
-    for step in steps:
-        print(round(step, 4))
+    # for step in steps:
+    #     print(round(step, 4))
 
     matrix = [[], ]
     for i in range(0, len(limits)):
@@ -36,18 +51,29 @@ def dump(limits, accuracy, filename='dump.csv'):
             0.625 * matrix[2][i] * matrix[4][i] * matrix[5][i],
         4))
 
-    matrix = np.array(matrix)
-    matrix = matrix.transpose()
+        matrix = np.array(matrix)
+        matrix = matrix.transpose()
 
-    # for i in hypercube:
-    #     print(round(max(i), 2), i)
-
-    with open(filename, 'w') as csvfile:
-        for line in matrix:
+    with open(filepath, 'w') as csvfile:
+        for row in matrix:
             dumpline = ''
-            for element in line:
+            for element in row:
                 dumpline += '{},'.format(element)
             dumpline += '\n'
             csvfile.write(dumpline)
 
     return matrix
+
+
+def plot_parallel(filename=SAMPLES_DEFAULT_FILENAME):
+    filepath = f'{SAMPLES_DIR}/{filename}'
+    data = pd.read_csv(filepath, sep=',')
+    pd.plotting.parallel_coordinates(data, 'Name')
+    pl.show()
+
+
+def plot_andrews(filename=SAMPLES_DEFAULT_FILENAME):
+    filepath = f'{SAMPLES_DIR}/{filename}'
+    data = pd.read_csv(filepath, sep=',')
+    pd.plotting.andrews_curves(data, 'Name')
+    pl.show()
